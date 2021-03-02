@@ -56,14 +56,12 @@ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/
     liftoff GCA_002880755.3_Clint_PTRv2.genomic.fna GRCh38.p13.genome.fa -g gencode.v35.annotation.gff3 -o test.gff3
 
 其中`GCA**.fna`是黑猩猩的基因序列的fasta文件，来自NCBI数据库，`GRCh38.p13.genome.fa`是人类基因组序列fasta文件，来自Gencode数据库，目的是与同样来自Gencode数据库的注释文件`gencode.v35.annotation.gff3`相匹配。
-
-###结果准确性评估
+##结果准确性评估
 通过对`liftoff`这个工具映射序列的结构完整以及序列完整性进行评估，发现此工具具有可信度。拿黑猩猩和人类基因组的迁移来说，其序列平均相似度达97%以上（开放阅读框ORF），结构完整性与参考基因组相比也可以达到98%以上（主要考虑内含子`GT-AG`法则，以及开放阅读框是否以起始密码子开头，终止密码子结尾）。
 
 ###评估过程中还需要用到的其他软件和代码
 **完整性评估**
 
- 一. 评估完整性
  序列完整性主要通过序列特征进行，如ORF以起始密码子ATG开头，以终止密码子TAA、TAG、TGA结尾；以及内含子符合GT-AG法则。因为gff3格式的注释文件中并不包括内含子，所以需要用另一个工具计算得到内含子，即`bedtools`其中的`subtract`函数。
  `bedtools`安装
 
@@ -81,8 +79,11 @@ export PATH=$PWD:$PATH
    
 内含子的坐标需要使用基因（gene）或转录本（transcript）减去外显子（exon）获得。
 但是需要注意的是，gff格式的注释文件起始坐标是1，结束至少为1，例如以起始密码子的坐标为例，在gff格式的文件中，其坐标可能为（1，3），表示123，而对于bed格式的文件，起始坐标为0，结束至少为1，对于上述密码子的坐标，bed文件表示为（0，3），即不含头。需要把gff文件的起始坐标都减去1，再进行计算。
-**pipeline**
-1.提取各物种注释文件中的蛋白质编码基因。脚本如下`No.1protein_coding.pl`需根据不同文件进行适量修改再使用。
+
+
+------------
+##**pipeline**
+1.提取各物种注释文件中的蛋白质编码基因。脚本如下`No.1protein_coding.pl`需根据不同文件进行适量修改再使用。输入为注释文件`.gff`输出文件格式一般也是`.gff`
 2.使用`gffread`拼接出ORF(提取CDS拼接），其也可通过`conda`进行安装，如下
 
     conda install gffread -y
@@ -100,7 +101,8 @@ export PATH=$PWD:$PATH
     #-x 为提取CDS
     
 注：`gffread`生成的fasta文件是多行表示的，即每行70bases。
-3.计算ORF中是否有完整结构。可以通过提取第一行序列计算ATG出现的比例，脚本`No.3countorfatg.pl`可以提取第一行。`No.4orf_atgnumber.pl`可以计算结构完整性比例。
+3.计算ORF中是否有完整结构。可以通过提取第一行序列计算ATG出现的比例，脚本`No.3countorfatg.pl`可以提取第一行。输入文件为orf序列fasta文件，输出为提取的orf第一行。可以写入fasta文件。
+`No.4orf_atgnumber.pl`可以计算结构完整性比例。
 4.内含子结构完整性
 如上所述先使用`bedtools`中的`subtract`函数，从蛋白质编码序列中分别用`awk`提取出正负链的gene/mRNA和exon。
 
@@ -115,5 +117,67 @@ awk 'BEGIN {OFS="\t"} {if($4=="exon") print $1,$2,$3,$4,$5,$6;}' yangtuo_llama+.
 之后再使用`bedtools`中的`getfasta`函数得到内含子的序列
 
     bedtools getfasta -fi genome.fa -bed intron.bed -fo intron.fa
-计算得到的序列中具有完整GT-AG的比例，脚本为`No.5intron_gtag.pl`
+计算得到的序列中具有完整GT-AG的比例，脚本为`No.6intron_gtag.pl`
 
+**相似性和序列长度评估**
+进行相似性和长度评估需要进行序列比对。能做到序列两两依次比对的一般常用本地版blast进行局部双序列比对。
+###blast安装
+1.进入NCBI官网[NCBI][1]
+2.点击All Resources
+3.Downloads
+4.BLAST(Stand-alone)[blast][2]根据需要选择相应安装包下载
+
+    wget ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.10.1+-x64-linux.tar.gz
+    tar -zxvf ncbi-blast-2.7.1+-x64-linux.tar.gz #解压
+    mv ncbi-blast-2.7.1+-x64-linux.tar.gz blast #改名
+    echo export PATH="~/blast/bin/:$PATH" >>.bashrc 
+    source .bashrc
+
+
+设置坏境变量并将其写入`.bashrc`使其可以直接使用。
+
+
+
+5.用参考物种的ORF序列建库。
+
+    makeblastdb -in yangtuo_alpaca_gffread.fa -dbtype nucl -out yangtuo_alpaca_db
+  `-in`后是输入需要建库的fasta文件，`-dbtype`是建库类型，可供选择的有nucl和prot，容易理解nucl是核酸，prot是蛋白质。`-out`是库的名字。
+
+建库后生成以下文件
+
+    yangtuo_alpaca_database.nhr
+    yangtuo_alpaca_database.nin
+    yangtuo_alpaca_database.nsq
+
+6.blast有几个可执行文件，分别是`blastn`  `blastx`  `blastp`   `tblastn`   `tblastx` 等，
+blastn:核苷酸与核苷酸库比对(核苷酸层面)
+blastx:核苷酸与蛋白质库比对(核苷酸翻译成蛋白质，在蛋白层面进行比对)
+blastp:蛋白质与蛋白质库比对
+tblastn:蛋白质与核苷酸库比对(核苷酸库翻译成蛋白质再进行比对)
+tblastx:核苷酸与核苷酸库比对(蛋白质层面)
+很明显，在这里需要用到就是`blastn`
+
+     blastn -query yangtuo_guanaco_gffread.fa -db yangtuo_alpaca_database -out yangtuo_guanacoblast.csv -evalue 1e-5 -outfmt 6
+其中`-query`后加待比对序列的fasta文件，`-db`后加上一步生成的库名，`-out`后加输出比对结果的文件名，`-evalue`是设定evalue的阈值，`-outfmt`是输出文件的格式，从0-18可供选择，6为表格文件。生成的表格无表头，每一列代表一下内容
+
+> query ID|    subject ID |  相似度  |  比对长度 |   错配数 |   query start |   query end |   subject start  |  subject end    |    evalue |    score
+
+7.提取序列ID相同的进行相似度和比对长度比对结果评估
+`No.7blastana.pl`用于提取ID相同的序列，输入为`blastn`生成的`.csv`文件或其他格式的文件，输出一般为相同格式的文件。
+`No.8lengthdist.pl`用于对比对长度进行运算，输入同样为为`blastn`生成的`.csv`文件或其他格式的文件，输出一般为相同格式的文件。
+
+8.相似度与长度的比对结果用R中的ggplot2包进行呈现。
+
+    data1 <- read.csv("guanaco_blast.csv",header = TRUE)
+    p1 <- ggplot(data1,aes(x=相似度))
+    p1+geom_histogram(binwidth=0.25,fill="#69b3a2",color="#e9ecef")+labs(title = "guanaco")
+    length_data1 <- read.csv("guanaco_length.csv",header = FALSE)
+    p2 <- ggplot(length_data1,aes(x=V3))
+    p2+geom_histogram(binwidth=2,fill="#69b3a2",color="#e9ecef")+labs(title = "vicugna",x="length_diff")
+
+
+    
+    
+
+  [1]: https://www.ncbi.nlm.nih.gov/
+  [2]: ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/
