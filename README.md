@@ -23,15 +23,13 @@
 
 | 软件/依赖包 | 版本号  | 语言   | 安装环境             | 下载地址                                                     |
 | ----------- | ------- | ------ | -------------------- | ------------------------------------------------------------ |
-| Liftoff     | v1.5.1  | python | Windows或Linux       | https://github.com/agshumate/Liftoff安装命令如下             |
-| bedtools    | v2.25.0 | C/C++  | Linux                | https://github.com/arq5x/bedtools2/archive/v2.25.0.tar.gz具体安装命令见下 |
-| gffread     | v0.12.1 | C/C++  | Linux或OS X          | http://ccb.jhu.edu/software/stringtie/gff.shtml#gffread具体安装命令见下 |
+| Liftoff     | v1.5.1  | python | Windows或Linux       | https://github.com/agshumate/Liftoff 安装命令如下             |
+| bedtools    | v2.25.0 | C/C++  | Linux                | https://github.com/arq5x/bedtools2/archive/v2.25.0.tar.gz 具体安装命令见下 |
+| gffread     | v0.12.1 | C/C++  | Linux或OS X          | http://ccb.jhu.edu/software/stringtie/gff.shtml#gffread 具体安装命令见下 |
 | blast       | 2.7.1   | C/C++  | Linux、OS X或Windows | https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.7.1/ |
 | miniconda   | 3       |        | Linux                | https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh |
 
-```
 
-```
 
 
 
