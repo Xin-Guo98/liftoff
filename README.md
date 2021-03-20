@@ -126,7 +126,7 @@ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/
 | 参数    | 说明                                                   | 默认值 | 推荐值（文献/网址） |
 | ------- | ------------------------------------------------------ | ------ | ------------------- |
 | -query  | `-query`后加待比对序列的fasta文件                      | 无     | 无                  |
-| -db     | `-db`后加建库生成的库名                                |        | 无                  |
+| -db     | `-db`后加建库生成的库名                                |  无      | 无                  |
 | -out    | `-out`后加输出比对结果的文件名                         | _      | 无                  |
 | -evalue | `-evalue`是设定evalue的阈值                            | 无     | 无                  |
 | -outfmt | `-outfmt`是输出文件的格式，从0-18可供选择，6为表格文件 | 6      | 6                   |
