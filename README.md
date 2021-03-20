@@ -23,13 +23,11 @@
 
 | 软件/依赖包 | 版本号  | 语言   | 安装环境             | 下载地址                                                     |
 | ----------- | ------- | ------ | -------------------- | ------------------------------------------------------------ |
-| Liftoff     | v1.5.1  | python | Windows或Linux       | https://github.com/agshumate/Liftoff 安装命令如下             |
+| Liftoff     | v1.5.1  | python | Windows或Linux       | https://github.com/agshumate/Liftoff 安装命令如下            |
 | bedtools    | v2.25.0 | C/C++  | Linux                | https://github.com/arq5x/bedtools2/archive/v2.25.0.tar.gz 具体安装命令见下 |
 | gffread     | v0.12.1 | C/C++  | Linux或OS X          | http://ccb.jhu.edu/software/stringtie/gff.shtml#gffread 具体安装命令见下 |
 | blast       | 2.7.1   | C/C++  | Linux、OS X或Windows | https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.7.1/ |
 | miniconda   | 3       |        | Linux                | https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh |
-
-
 
 
 
@@ -141,14 +139,14 @@ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/
 
 ### 脚本清单
 
-| 作者    | 脚本                    | 语言 | 目的                                                         | 输入 （格式）                            | 输出（格式）                       |
-| ------- | ----------------------- | ---- | ------------------------------------------------------------ | ---------------------------------------- | ---------------------------------- |
-| Xin-Guo | [`protein_coding.pl`]() | perl | 从注释中提取出编码蛋白质的基因以及其他特征                   | 注释文件`.gff`                           | 注释文件`.gff`                     |
-| Xin-Guo | [`countorfatg.pl`]()    | perl | gffread生成的orf序列每行70bases，提取第一行（最后一行）来计算以ATG开头的比例 | 输入文件为orf序列fasta文件               | 提取的orf第一行，可以写入fasta文件 |
-| Xin-Guo | [`orf_atgnumber.pl`]()  | perl | 计算结构完整性比例                                           | `countorfatg.pl`输出的orf第一行fasta文件 | 序列结构完整性比例                 |
-| Xin-Guo | [`intron_gtag.pl`]()    | perl | 计算得到的内含子序列中具有完整GT-AG的比例                    | 内含子序列fasta文件                      | 符合GT-AG法则比例                  |
-| Xin-Guo | [`blastana.pl`]()       | perl | 用于提取ID相同的序列                                         | `blastn`生成的`.csv`文件或其他格式的文件 | 与输入文件格式相同                 |
-| Xin-Guo | [`lengthdist.pl`]()     | perl | 用于对比对长度进行运算                                       | `blastn`生成的`.csv`文件或其他格式的文件 | 与输入文件格式相同                 |
+| 作者    | 脚本                                                         | 语言 | 目的                                                         | 输入 （格式）                            | 输出（格式）                       |
+| ------- | ------------------------------------------------------------ | ---- | ------------------------------------------------------------ | ---------------------------------------- | ---------------------------------- |
+| Xin-Guo | [`protein_coding.pl`](https://github.com/Xin-Guo98/liftoff/blob/main/Scripts/protein_coding.pl) | perl | 从注释中提取出编码蛋白质的基因以及其他特征                   | 注释文件`.gff`                           | 注释文件`.gff`                     |
+| Xin-Guo | [`countorfatg.pl`](https://github.com/Xin-Guo98/liftoff/blob/main/Scripts/countorfatg.pl) | perl | gffread生成的orf序列每行70bases，提取第一行（最后一行）来计算以ATG开头的比例 | 输入文件为orf序列fasta文件               | 提取的orf第一行，可以写入fasta文件 |
+| Xin-Guo | [`orf_atgnumber.pl`](https://github.com/Xin-Guo98/liftoff/blob/main/Scripts/orf_atgnumber.pl) | perl | 计算结构完整性比例                                           | `countorfatg.pl`输出的orf第一行fasta文件 | 序列结构完整性比例                 |
+| Xin-Guo | [`intron_gtag.pl`](https://github.com/Xin-Guo98/liftoff/blob/main/Scripts/intron_gtag.pl) | perl | 计算得到的内含子序列中具有完整GT-AG的比例                    | 内含子序列fasta文件                      | 符合GT-AG法则比例                  |
+| Xin-Guo | [`blastana.pl`](https://github.com/Xin-Guo98/liftoff/blob/main/Scripts/blastana.pl) | perl | 用于提取ID相同的序列                                         | `blastn`生成的`.csv`文件或其他格式的文件 | 与输入文件格式相同                 |
+| Xin-Guo | [`lengthdist.pl`](https://github.com/Xin-Guo98/liftoff/blob/main/Scripts/lengthdist.pl) | perl | 用于对比对长度进行运算                                       | `blastn`生成的`.csv`文件或其他格式的文件 | 与输入文件格式相同                 |
 
 ### 脚本参数
 
@@ -301,10 +299,3 @@ p2+geom_histogram(binwidth=2,fill="#69b3a2",color="#e9ecef")+labs(title = "vicug
    
 
    
-
-
-
- 
-
- 
-
